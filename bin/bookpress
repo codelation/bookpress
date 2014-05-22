@@ -18,7 +18,7 @@ ARGV.each do |directory|
   File.open(filename, 'w') { |file| file.truncate(0) }
   File.write(filename, book.to_html)
 
-  S3Object.store(filename, open(filename), ENV['S3_BUCKET_NAME'])
+  AWS::S3::S3Object.store(filename, open(filename), ENV['S3_BUCKET_NAME'])
 end
 
 
