@@ -1,6 +1,9 @@
 # require "bookpress/version"
 require "bundler"
 require "pathname"
+require "nokogiri"
+require "redcarpet"
+require "pygments.rb"
 
 Bundler.require(:default)
 
