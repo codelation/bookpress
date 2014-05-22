@@ -1,0 +1,24 @@
+#!/usr/bin/env ruby
+
+lib = File.expand_path(File.dirname(__FILE__) + '/../lib')
+$LOAD_PATH.unshift(lib) if File.directory?(lib) && !$LOAD_PATH.include?(lib)
+
+require 'bookpress'
+require 'aws/s3'
+
+AWS::S3::Base.establish_connection!(
+    access_key_id: ENV['S3_ACCESS_KEY_ID'],
+    secret_access_key: ENV['S3_SECRET_ACCESS_KEY']
+)
+
+ARGV.each do |directory|
+  book = Bookpress::Book.new(directory)
+  
+  filename = "#{book.tree.first.first}.html"
+  File.open(filename, 'w') { |file| file.truncate(0) }
+  File.write(filename, book.to_html)
+
+  S3Object.store(filename, open(filename), ENV['S3_BUCKET_NAME'])
+end
+
+
