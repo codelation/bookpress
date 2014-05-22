@@ -5,8 +5,6 @@ require "nokogiri"
 require "redcarpet"
 require "pygments.rb"
 
-Bundler.require(:default)
-
 # This reopens the Hash class to add a method to allow sorting by key recursively
 class Hash
   def sort_by_key(recursive = false, &block)
