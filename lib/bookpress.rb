@@ -20,12 +20,27 @@ end
 
 module Bookpress
   class Book
-    attr_accessor :title, :pages, :tree
-    
+    attr_accessor :title, :pages, :tree, :stylesheets
+
     def initialize(directory)
       # Get all markdown files
       @pages = Pathname.glob("#{directory}/" "**/*.{md,markdown}")
-      
+
+
+      @stylesheets = []
+
+      stylenames = Pathname.glob("#{directory}/" "**/*.{css}")
+      stylenames.each do |sheet|
+        file = File.new(sheet, "r")
+        style = ""
+        while (line = file.gets)
+            style << line
+        end
+        file.close
+        @stylesheets << style
+      end
+
+
       # Create a Hash to store the book tree structure
       @tree = Hash.new { |h, k| h[k] = Hash.new &h.default_proc }
 
@@ -44,21 +59,26 @@ module Bookpress
       # Sort the structure by key
       @tree = @tree.sort_by_key(true) { |x, y| Utility.orderify(x.to_s) <=> Utility.orderify(y.to_s) }
     end
-    
+
     def to_html
       # Build the document
       builder = Nokogiri::HTML::Builder.new do |doc|
        doc.html do
+        doc.head do
+          @stylesheets.each do |sheet|
+            doc.style "\n#{sheet}\n"
+          end
+        end
          doc.body do
            doc.cdata Utility.articlize(@tree)
          end
        end
       end
-      
+
       builder.to_html
     end
   end
-  
+
   class Utility
     def self.titleize(title)
       if title
@@ -126,7 +146,7 @@ module Bookpress
         tree
       end
     end
-    
+
     def self.markdown_renderer
        Redcarpet::Markdown.new(Bookpress::HTMLRenderer, {
         autolink:                     true,
@@ -136,7 +156,7 @@ module Bookpress
       })
     end
   end
-  
+
   class HTMLRenderer < Redcarpet::Render::HTML
     include Redcarpet::Render::SmartyPants
 
