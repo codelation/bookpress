@@ -26,7 +26,6 @@ module Bookpress
       # Get all markdown files
       @pages = Pathname.glob("#{directory}/" "**/*.{md,markdown}")
 
-
       @stylesheets = []
 
       stylenames = Pathname.glob("#{directory}/" "**/*.{css}")
@@ -39,7 +38,6 @@ module Bookpress
         file.close
         @stylesheets << style
       end
-
 
       # Create a Hash to store the book tree structure
       @tree = Hash.new { |h, k| h[k] = Hash.new &h.default_proc }
