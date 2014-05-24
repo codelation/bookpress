@@ -4,6 +4,7 @@ require "pathname"
 require "nokogiri"
 require "redcarpet"
 require "pygments.rb"
+require "sass"
 
 # This reopens the Hash class to add a method to allow sorting by key recursively
 class Hash
@@ -28,15 +29,11 @@ module Bookpress
 
       @stylesheets = []
 
-      stylenames = Pathname.glob("#{directory}/" "**/*.{css}")
+
+
+      stylenames = Pathname.glob("#{directory}/" "**/*.{css,scss}")
       stylenames.each do |sheet|
-        file = File.new(sheet, "r")
-        style = ""
-        while (line = file.gets)
-            style << line
-        end
-        file.close
-        @stylesheets << style
+        get_stylesheet(sheet)
       end
 
       # Create a Hash to store the book tree structure
@@ -75,7 +72,24 @@ module Bookpress
 
       builder.to_html
     end
+  
+    def get_stylesheet(sheet)
+        file = File.new(sheet, "r")
+        style = ""
+        while (line = file.gets)
+            style << line
+        end
+        file.close
+        if File.extname(sheet) == ".scss"
+          engine = Sass::Engine.new(style, :syntax => :scss)
+          style = engine.render #=> "#main { background-color: #0000ff; }\n"
+        end
+        @stylesheets << style
+    end
+
   end
+
+
 
   class Utility
     def self.titleize(title)
