@@ -29,8 +29,6 @@ module Bookpress
 
       @stylesheets = []
 
-
-
       stylenames = Pathname.glob("#{directory}/" "**/*.{css,scss}")
       stylenames.each do |sheet|
         get_stylesheet(sheet)
