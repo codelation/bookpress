@@ -64,9 +64,9 @@ module Bookpress
             doc.style "\n#{sheet}\n"
           end
         end
-         doc.body do
-           doc.cdata Utility.articlize(@tree)
-         end
+        doc.body do
+          doc.cdata Utility.articlize(@tree)
+        end
        end
       end
 
@@ -88,7 +88,6 @@ module Bookpress
     end
 
   end
-
 
 
   class Utility
